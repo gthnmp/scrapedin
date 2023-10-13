@@ -1,0 +1,36 @@
+make me a seperate function to scrape the profile page, just the name for now.
+
+import puppeteer from 'puppeteer'
+
+type LoginInfo = {
+  email: string;
+  password: string;
+};
+
+const login: LoginInfo = {
+  email: process.env.EMAIL || '',
+  password: process.env.PASSWORD || '',
+};
+
+const selectors = {
+  name : "text-heading-xlarge inline t-24 v-align-middle break-words"
+}
+
+const main = async() => {
+  const browser = await puppeteer.launch({headless:false});
+
+  const page = await browser.newPage();
+
+  await page.goto('https://foo.com/home', {waitUntil:'domcontentloaded'});
+
+  await page.type('#session_key', login.email);
+  await page.type('#session_password', login.password);
+  await page.click('[data-id="sign-in-form__submit-btn"]'); 
+
+  await page.waitForNavigation();
+
+  await page.goto('https://foo.com/bar');
+
+}
+
+main()
