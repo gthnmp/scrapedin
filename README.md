@@ -1,4 +1,5 @@
-# linkedin-data-minig
+# ScrapeDin
+A simple NodeJS script to extract multiple LinkedIn profiles
 
 To install dependencies:
 
