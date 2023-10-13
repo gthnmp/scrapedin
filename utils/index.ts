@@ -1,4 +1,4 @@
-import { Location } from "../types";
+import { Location } from "./types";
 
 export function sanitizeText(input: string): string {
   const trimmedText = input.trim();

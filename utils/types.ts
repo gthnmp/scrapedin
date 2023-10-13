@@ -18,15 +18,15 @@ export type UserProfile= {
 };
 
 export type Experience= {
-  title: string;
-  company: string;
+  title: string | null;
+  company: string | null;
   employmentType: string | null; // You might want to specify the type for employmentType
   location: Location | null;
-  startDate: string;
-  endDate: string;
+  startDate: string | null;
+  endDate: string | null;
   endDateIsPresent: boolean;
   description: string | null;
-  durationInDays: number;
+  duration: string | null;
 };
 
 export type Education= {
@@ -50,3 +50,20 @@ export type LinkedInProfile= {
   volunteerExperiences: any[]; // You might want to specify the type for volunteerExperiences
   skills: Skill[];
 };
+
+export type BasicProfileSelectors = {
+  fullName: string;
+  title: string;
+  location: string;
+  photo: string;
+};
+
+export type ExperienceSelectors = {
+  title: string;
+  company: string;
+  employmentType: string; 
+  location: string; 
+  date:string;
+  description: string;
+};
+

@@ -1,36 +1,48 @@
-make me a seperate function to scrape the profile page, just the name for now.
+Foreach containers, I want you to extract all of this selectors text elements, and you to do this:
+- Inside the `company` selector, there is a company name and an employment type, that are seperated only by a `·` I want you to seperate those two, and put it to the respective key in the exprience object. And for the employment type, there can be : Full-Time, Part-Time, Freelance, Self-Employed, Contract, Internship, Temporary, Volunteer, Apprenticehip, Seasonal 
+- Inside the `date` selector, there is startDate and endDate, that are seperated by a `-`, and there is also a duration that are seperated using `·`, so the format is somethign like this: Apr 2027 - Jul 2045 · 18 yr 3 mos. I want you to put that into its own key on the experience object  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+selectors.ts:
 
-import puppeteer from 'puppeteer'
-
-type LoginInfo = {
-  email: string;
-  password: string;
-};
-
-const login: LoginInfo = {
-  email: process.env.EMAIL || '',
-  password: process.env.PASSWORD || '',
-};
-
-const selectors = {
-  name : "text-heading-xlarge inline t-24 v-align-middle break-words"
+export const experienceSelectors : any = {
+  title : "#profilePagedListComponent-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-EXPERIENCE-VIEW-DETAILS-profile-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-NONE-en-US-0 > div > div > div.display-flex.flex-column.full-width.align-self-center > div > div.display-flex.flex-column.full-width > div > div > div > div > span:nth-child(1)",
+  company: "#profilePagedListComponent-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-EXPERIENCE-VIEW-DETAILS-profile-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-NONE-en-US-0 > div > div > div.display-flex.flex-column.full-width.align-self-center > div > div.display-flex.flex-column.full-width > span:nth-child(2) > span:nth-child(1)",
+  date:"#profilePagedListComponent-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-EXPERIENCE-VIEW-DETAILS-profile-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-NONE-en-US-0 > div > div > div.display-flex.flex-column.full-width.align-self-center > div > div.display-flex.flex-column.full-width > span.t-14.t-normal.t-black--light > span:nth-child(1)",
+  location:"#profilePagedListComponent-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-EXPERIENCE-VIEW-DETAILS-profile-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-NONE-en-US-2 > div > div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > span:nth-child(4) > span:nth-child(1)",
+  description:"#profilePagedListComponent-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-EXPERIENCE-VIEW-DETAILS-profile-ACoAAAF9B5sBl7jhtDyH-0AsdPsV2KvZ-ZhqIJ0-NONE-en-US-2 > div > div > div.display-flex.flex-column.full-width.align-self-center > div.pvs-list__outer-container.pvs-entity__sub-components > ul > li > div > ul > li > div > div > div > span:nth-child(1)"
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const main = async() => {
-  const browser = await puppeteer.launch({headless:false});
 
-  const page = await browser.newPage();
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+extractExperience.ts:
 
-  await page.goto('https://foo.com/home', {waitUntil:'domcontentloaded'});
+import { Page, ElementHandle } from "puppeteer";
+import { sanitizeText, extractLocation } from "../utils";
+import { Experience, ExperienceSelectors } from "../utils/types";
 
-  await page.type('#session_key', login.email);
-  await page.type('#session_password', login.password);
-  await page.click('[data-id="sign-in-form__submit-btn"]'); 
+const listContainerSelector = ".pvs-list__paged-list-item.artdeco-list__item.pvs-list__item--line-separated.pvs-list__item--one-column";
 
-  await page.waitForNavigation();
+export const scrapeExperiences = async (page: Page, selectors: ExperienceSelectors): Promise<Experience[]> => {
+  const listContainers: ElementHandle<Element>[] = await page.$$(listContainerSelector);
+  const experiences: Experience[] = [];
 
-  await page.goto('https://foo.com/bar');
+  const experience: Experience = {
+    title: null,
+    company: null,
+    employmentType: null,
+    location: null,
+    startDate: null,
+    endDate: null,
+    endDateIsPresent: true,
+    description: null,
+    durationInDays: 0,
+  };
+  
+  for (const container of listContainers) {
+    console.log(container)
+  }
 
-}
-
-main()
+  return experiences;
+};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
